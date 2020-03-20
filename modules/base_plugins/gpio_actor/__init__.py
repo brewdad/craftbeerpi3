@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import time
-
+import datetime
+from datetime import datetime
+from time import localtime, strftime
 from modules import cbpi
 from modules.core.hardware import ActorBase, SensorPassive, SensorActive
 from modules.core.props import Property
-
 try:
     import RPi.GPIO as GPIO
 
@@ -25,12 +26,24 @@ class GPIOSimple(ActorBase):
         GPIO.output(int(self.gpio), 0)
 
     def on(self, power=0):
-        print "GPIO ON %s" % str(self.gpio)
         GPIO.output(int(self.gpio), 1)
+        state = "ON" 
+        filename = "./logs/%s_%s.log" % ("actor_gpio", int(self.gpio))
+        formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        msg = str(formatted_time) + "," + str(state) + "\n"
+        with open(filename, "a") as file:
+            file.write(msg)
+        #print "Actor is on -", state, formatted_time
 
     def off(self):
-        print "GPIO OFF"
         GPIO.output(int(self.gpio), 0)
+        state = "OFF"
+        filename = "./logs/%s_%s.log" % ("actor_gpio", int(self.gpio))
+        formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        msg = str(formatted_time) + "," + str(state) + "\n"
+        with open(filename, "a") as file:
+            file.write(msg)
+        #print "Actor is off -", state, formatted_time
 
 @cbpi.actor
 class GPIOPWM(ActorBase):
@@ -83,10 +96,24 @@ class RelayBoard(ActorBase):
     def on(self, power=0):
 
         GPIO.output(int(self.gpio), 0)
+        state = "ON" 
+        filename = "./logs/%s_%s.log" % ("actor_gpio", int(self.gpio))
+        formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        msg = str(formatted_time) + "," + str(state) + "\n"
+        with open(filename, "a") as file:
+            file.write(msg)
+        
 
     def off(self):
 
         GPIO.output(int(self.gpio), 1)
+        state = "OFF" 
+        filename = "./logs/%s_%s.log" % ("actor_gpio", int(self.gpio))
+        formatted_time = strftime("%Y-%m-%d %H:%M:%S", localtime())
+        msg = str(formatted_time) + "," + str(state) + "\n"
+        with open(filename, "a") as file:
+            file.write(msg)
+        
 
 @cbpi.actor
 class Dummy(ActorBase):
@@ -102,6 +129,3 @@ class Dummy(ActorBase):
 
     def off(self):
         print "OFF"
-
-
-
